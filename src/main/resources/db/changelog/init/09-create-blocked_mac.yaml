@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-blocked_mac
+      author: Aleksandr
+      changes:
+        - createTable:
+            tableName: blocked_mac
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_mac
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: block_time
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: remaining_time
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: wlc_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: integer
+        - addUniqueConstraint:
+            tableName: blocked_mac
+            columnNames: client_mac, wlc_id
+            constraintName: UK_MAC_WLC
+
+        - addForeignKeyConstraint:
+            baseTableName: blocked_mac
+            baseColumnNames: wlc_id
+            referencedTableName: wlc
+            referencedColumnNames: id
+            constraintName: FK_BLOCKED_MAC_WLC
+            onDelete: cascade

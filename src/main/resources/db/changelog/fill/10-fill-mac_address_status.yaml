@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-table-mac_address_status
+      author: Aleksandr
+      changes:
+        - loadData:
+            encoding: UTF-8
+            separator: ;
+            quotchar: ''''
+            usePreparedStatements: true
+            tableName: mac_address_status
+            file: ../csv/mac_address_status.csv
+            commentLineStartsWith: //
+            schemaName: public
+            relativeToChangelogFile:  true
+            columns:
+              - column:
+                  header: status
+                  name: status
+                  type: varchar
+              - column:
+                  header: blockedmac_id
+                  name: blockedmac_id
+                  type: numeric
+      rollback:
+        - sql:
+            sql: DELETE FROM mac_address_status;

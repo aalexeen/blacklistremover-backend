@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-table-deleted_mac
+      author: Aleksandr
+      changes:
+        - loadData:
+            encoding: UTF-8
+            separator: ;
+            quotchar: ''''
+            usePreparedStatements: true
+            tableName: deleted_mac
+            file: ../csv/deleted_mac.csv
+            commentLineStartsWith: //
+            schemaName: public
+            relativeToChangelogFile: true
+            columns:
+              - column:
+                  header: client_mac
+                  name: client_mac
+                  type: varchar
+              - column:
+                  header: deleted_time
+                  name: deleted_time
+                  type: date
+              - column:
+                  header: deleted_by_user_id
+                  name: deleted_by_user_id
+                  type: numeric
+              - column:
+                  header: wlc_id
+                  name: wlc_id
+                  type: numeric
+              - column:
+                  header: reason
+                  name: reason
+                  type: varchar
+              - column:
+                  header: original_block_time
+                  name: original_block_time
+                  type: varchar
+      rollback:
+        - sql:
+            sql: DELETE FROM deleted_mac;

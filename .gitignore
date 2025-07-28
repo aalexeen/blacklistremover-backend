@@ -1,0 +1,21 @@
+# Sensitive configuration files
+application-local.yaml
+application-local.properties
+application-dev.yaml
+application-dev.properties
+config.properties
+.env
+.env.local
+*.env
+
+.idea
+out
+target
+*.iml
+log
+*.patch
+
+
+.qodo
+
+

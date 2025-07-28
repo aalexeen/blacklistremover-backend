@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-deleted_mac
+      author: Aleksandr
+      changes:
+        - createTable:
+            tableName: deleted_mac
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_mac
+                  type: varchar(17)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_time
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_by_user_id
+                  type: integer
+              - column:
+                  name: wlc_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: varchar(48)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: original_block_time
+                  type: varchar(48)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: deleted_mac
+            columnNames: client_mac, deleted_time
+            constraintName: UK_MAC_DELETEDTIME
+
+        - addForeignKeyConstraint:
+            baseTableName: deleted_mac
+            baseColumnNames: wlc_id
+            referencedTableName: wlc
+            referencedColumnNames: id
+            constraintName: FK_DELETED_MAC_WLC
+            onDelete: cascade
+
+        - addForeignKeyConstraint:
+            baseTableName: deleted_mac
+            baseColumnNames: deleted_by_user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: FK_DELETED_MAC_USER
+            onDelete: set null

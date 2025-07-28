@@ -1,0 +1,4 @@
+Name;Email;Password
+'User';'user@gmail.com';'{noop}password'
+'Admin';'admin@gmail.com';'{noop}admin'
+'Guest';'guest@gmai.com';'{noop}guest'

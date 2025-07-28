@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-table-user_role
+      author: Aleksandr
+      changes:
+        - loadData:
+            encoding: UTF-8
+            separator: ;
+            quotchar: ''''
+            usePreparedStatements: true
+            tableName: user_role
+            file: ../csv/user_role.csv
+            commentLineStartsWith: //
+            schemaName: public
+            relativeToChangelogFile:  true
+            columns:
+              - column:
+                  header: role
+                  name: role
+                  type: varchar
+              - column:
+                  header: user_id
+                  name: user_id
+                  type: numeric
+      rollback:
+        - sql:
+            sql: DELETE FROM user_role;

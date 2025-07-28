@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-mac_address_status
+      author: Aleksandr
+      changes:
+        - createTable:
+            tableName: mac_address_status
+            columns:
+              - column:
+                  name: blockedmac_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: mac_address_status
+            columnNames: blockedmac_id, status
+            constraintName: UK_BLOCKEDMAC_STATUS
+        - addForeignKeyConstraint:
+            baseTableName: mac_address_status
+            baseColumnNames: blockedmac_id
+            referencedTableName: blocked_mac
+            referencedColumnNames: id
+            constraintName: FK_BLOCKEDMAC_STATUS
+            onDelete: cascade

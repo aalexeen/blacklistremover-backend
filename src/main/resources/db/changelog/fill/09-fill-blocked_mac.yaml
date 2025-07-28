@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-table-blocked_mac
+      author: Aleksandr
+      changes:
+        - loadData:
+            encoding: UTF-8
+            separator: ;
+            quotchar: ''''
+            usePreparedStatements: true
+            tableName: blocked_mac
+            file: ../csv/blocked_mac.csv
+            commentLineStartsWith: //
+            schemaName: public
+            relativeToChangelogFile:  true
+            columns:
+              - column:
+                  header: client_mac
+                  name: client_mac
+                  type: varchar
+              - column:
+                  header: block_time
+                  name: block_time
+                  type: varchar
+              - column:
+                  header: remaining_time
+                  name: remaining_time
+                  type: varchar
+              - column:
+                  header: wlc_id
+                  name: wlc_id
+                  type: numeric
+              - column:
+                  header: reason
+                  name: reason
+                  type: varchar
+              - column:
+                  header: user_id
+                  name: user_id
+                  type: numeric
+      rollback:
+        - sql:
+            sql: DELETE FROM blocked_mac;

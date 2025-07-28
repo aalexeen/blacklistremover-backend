@@ -1,0 +1,4 @@
+client_mac;deleted_time;deleted_by_user_id;wlc_id;reason;original_block_time
+00:11:22:33:44:55;2025-03-15 10:30:45;1;1;auth-failure;5 days 12 hrs 38 mins 5 secs
+aa:bb:cc:dd:ee:ff;2025-03-16 14:22:10;2;2;auth-failure;17 days 15 hrs 23 mins 15 secs
+f4:c8:8a:b6:39:4c;2025-03-17 09:15:32;1;1;auth-failure;2 hrs 26 mins 15 secs

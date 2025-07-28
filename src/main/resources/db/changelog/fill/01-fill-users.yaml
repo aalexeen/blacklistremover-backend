@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-table-users
+      author: Aleksandr
+      changes:
+        - loadData:
+            encoding: UTF-8
+            separator: ;
+            quotchar: ''''
+            usePreparedStatements: true
+            tableName: users
+            file: ../csv/users.csv
+            commentLineStartsWith: //
+            schemaName: public
+            relativeToChangelogFile:  true
+            columns:
+              - column:
+                  header: name
+                  name: name
+                  type: varchar
+              - column:
+                  header: email
+                  name: email
+                  type: varchar
+              - column:
+                  header: password
+                  name: password
+                  type: varchar
+      rollback:
+        - sql:
+            sql: DELETE FROM users;
