@@ -62,7 +62,46 @@ The application uses persistent SSH connections with the following features:
 3. **Security**: Configure user credentials and roles
 4. **Logging**: Set appropriate log levels for SSH operations
 
-## Usage
+## Deployment with Docker
+
+The full stack (frontend + backend + database) is deployed via a single `docker-compose.yml` in this repository. Docker images are automatically built and pushed to Docker Hub on every push to `main`.
+
+### Prerequisites
+- Docker and Docker Compose installed
+
+### Steps
+
+**1. Clone this repository:**
+```bash
+git clone https://github.com/aalexeen/blacklistremover-backend.git
+cd blacklistremover-backend
+```
+
+**2. Create `.env` from the template and fill in the values:**
+```bash
+cp .env.example .env
+nano .env
+```
+
+**3. Start all services:**
+```bash
+docker compose up -d
+```
+
+Docker will automatically pull the following images:
+- `aalexeen/blacklistremover-backend:latest`
+- `aalexeen/blacklistremover-frontend:latest`
+- `postgres:16-alpine`
+
+**4. Open in browser:** `http://localhost`
+
+### Update after code changes
+```bash
+docker compose pull
+docker compose up -d
+```
+
+## Local Development
 1. Start the application with `mvn spring-boot:run`
 2. Access the web interface at http://localhost:8080
 3. Login with provided credentials
