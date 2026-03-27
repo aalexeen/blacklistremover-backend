@@ -5,10 +5,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.bhmc.blacklistremover.error.IllegalRequestDataException;
 import org.bhmc.blacklistremover.model.User;
+import org.bhmc.blacklistremover.to.AdminUserUpdateTo;
+import org.bhmc.blacklistremover.web.AuthUser;
 
 import java.net.URI;
 import java.util.List;
@@ -28,12 +32,13 @@ public class AdminUserController extends AbstractUserController {
         return super.get(id);
     }
 
-    @Override
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
-        super.delete(id);
-    }
+    // Deleting users is disabled — users are linked to audit history and must only be disabled
+//    @Override
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void delete(@PathVariable int id) {
+//        super.delete(id);
+//    }
 
     @GetMapping
     public List<User> getAll() {
@@ -54,10 +59,19 @@ public class AdminUserController extends AbstractUserController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @PathVariable int id) {
-        log.info("update {} with id={}", user, id);
-        assureIdConsistent(user, id);
-        repository.prepareAndSave(user);
+    @Transactional
+    public void update(@Valid @RequestBody AdminUserUpdateTo updateTo, @PathVariable int id) {
+        log.info("update {} with id={}", updateTo, id);
+        assureIdConsistent(updateTo, id);
+        User user = repository.getExisted(id);
+        user.setName(updateTo.getName());
+        user.setEmail(updateTo.getEmail().toLowerCase());
+        user.setRoles(updateTo.getRoles());
+        user.setEnabled(updateTo.isEnabled());
+        if (org.springframework.util.StringUtils.hasText(updateTo.getPassword())) {
+            user.setPassword(updateTo.getPassword());
+            repository.prepareAndSave(user);
+        }
     }
 
     @GetMapping("/by-email")
@@ -69,7 +83,11 @@ public class AdminUserController extends AbstractUserController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void enable(@PathVariable int id, @RequestParam boolean enabled) {
+    public void enable(@PathVariable int id, @RequestParam boolean enabled,
+                       @AuthenticationPrincipal AuthUser authUser) {
+        if (authUser.id() == id) {
+            throw new IllegalRequestDataException("You cannot change the enabled status of your own account");
+        }
         log.info(enabled ? "enable {}" : "disable {}", id);
         User user = repository.getExisted(id);
         user.setEnabled(enabled);

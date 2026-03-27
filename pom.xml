@@ -17,7 +17,7 @@
     <url>hhttps://github.com/aalexeen/blacklistremover</url>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>24</java.version>
         <jsoup.version>1.17.2</jsoup.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <springdoc.version>2.7.0</springdoc.version>

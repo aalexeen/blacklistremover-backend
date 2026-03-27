@@ -53,10 +53,12 @@ public class SecurityConfig {
                 var corsConfig = new org.springframework.web.cors.CorsConfiguration();
                 corsConfig.setAllowedOriginPatterns(List.of(
                         "http://localhost:*",        // Any port on localhost
-                        "http://192.168.*.*:*",     // Any IP in your network
-                        "http://127.0.0.1:*"        // Loopback)); // Allow frontend
+                        "http://127.0.0.1:*",       // Loopback
+                        "http://10.*.*.*:*",         // 10.x.x.x network
+                        "http://172.16.*.*:*",       // 172.16.x.x network
+                        "http://192.168.*.*:*"       // 192.168.x.x network
                 ));
-                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed methods
+                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); // Allowed methods
                 corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept")); // Allowed headers
                 corsConfig.setAllowCredentials(true); // Important: Allow credentials
                 corsConfig.setMaxAge(3600L); // Cache preflight for 1 hour
