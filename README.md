@@ -8,7 +8,7 @@
 This application provides automated removal of MAC addresses from wireless controller blacklists using SSH connections. It includes comprehensive logging of all removal operations and maintains synchronization between the database and controller hardware.
 
 -------------------------------------------------------------
-- Stack: [JDK 21](http://jdk.java.net/21/), Spring Boot 3.x, Spring Security, Spring Data JPA, Lombok, H2/PostgreSQL Database, Liquibase, Caffeine Cache, SpringDoc OpenApi 2.x, Mapstruct, SSH Client (SSHJ), Jakarta EE, Logback
+- Stack: [JDK 24](http://jdk.java.net/24/), Spring Boot 3.x, Spring Security, Spring Data JPA, Lombok, PostgreSQL, Liquibase, Caffeine Cache, SpringDoc OpenApi 2.x, Mapstruct, SSH Client (SSHJ), Jakarta EE, Logback
 - Run: `mvn spring-boot:run` in root directory.
 -----------------------------------------------------
 
@@ -17,12 +17,14 @@ This application provides automated removal of MAC addresses from wireless contr
 - **Multi-Controller Support**: Supports multiple WLC instances with persistent SSH connections
 - **Connection Management**: Automatic SSH connection pooling with health checks and reconnection
 - **Privileged Mode Support**: Automatically enters enable mode for administrative commands
-- **Comprehensive Logging**: All removal operations are logged with timestamps and user information
+- **Deletion History**: Full audit log of all MAC address removals with filters by user, date, reason
 - **Database Synchronization**: Maintains sync between local database and WLC hardware
-- **User Authentication**: Role-based access control with Spring Security
+- **Role-Based Access Control**: USER and ADMIN roles via Spring Security (Basic Auth)
+- **System Account Protection**: Built-in `system@system.com` account (`is_system=true`) cannot log in or be modified by admins — used only for automated operations
+- **Admin User Management**: Create, edit, enable/disable users via admin panel
 - **Caching**: Performance optimization with Caffeine cache
 - **REST API**: Full REST API with OpenAPI documentation
-- **Frontend Interface**: Modern web interface for MAC address management
+- **Frontend Interface**: Modern Vue 3 web interface, served via Nginx
 
 ## SSH Configuration
 The application uses persistent SSH connections with the following features:
@@ -52,9 +54,8 @@ The application uses persistent SSH connections with the following features:
 [REST API documentation](http://localhost:8080/)  
 
 ## Default Credentials for API
-- User: user@gmail.com / password 
-- Admin: admin@gmail.com / admin 
-- Guest: guest@gmail.com / guest
+Default test credentials are defined in `src/main/resources/db/changelog/csv/users.csv`.
+Change them before deploying to production.
 
 ## Configuration
 1. **SSH Settings**: Configure WLC SSH connection parameters in `application.yaml`
@@ -62,12 +63,27 @@ The application uses persistent SSH connections with the following features:
 3. **Security**: Configure user credentials and roles
 4. **Logging**: Set appropriate log levels for SSH operations
 
+## Production Deployment
+
+Production deployment is handled by `deploy.sh` in the frontend repository.
+It builds both backend and frontend, configures Nginx, PostgreSQL, and a systemd service.
+
+```bash
+# First-time setup
+./deploy.sh configure   # set ports, DB credentials, WLC settings
+./deploy.sh setup       # install dependencies, create DB, configure Nginx + systemd
+
+# Deploy
+./deploy.sh full        # build and deploy both backend and frontend
+./deploy.sh backend     # backend only
+./deploy.sh frontend    # frontend only
+```
+
+The script stores configuration in `.deploy.conf` (not committed — contains secrets).
+
 ## Deployment with Docker
 
-The full stack (frontend + backend + database) is deployed via a single `docker-compose.yml` in this repository. Docker images are automatically built and pushed to Docker Hub on every push to `main`.
-
-### Prerequisites
-- Docker and Docker Compose installed
+The full stack (frontend + backend + database) can also be deployed via `docker-compose.yml`.
 
 ### Steps
 
@@ -88,25 +104,13 @@ nano .env
 docker compose up -d
 ```
 
-Docker will automatically pull the following images:
-- `aalexeen/blacklistremover-backend:latest`
-- `aalexeen/blacklistremover-frontend:latest`
-- `postgres:16-alpine`
-
 **4. Open in browser:** `http://localhost`
-
-### Update after code changes
-```bash
-docker compose pull
-docker compose up -d
-```
 
 ## Local Development
 1. Start the application with `mvn spring-boot:run`
-2. Access the web interface at http://localhost:8080
-3. Login with provided credentials
-4. Use the frontend dashboard or REST API to remove MAC addresses from blacklists
-5. Monitor SSH connection status and logs for operation details
+2. Access the API at http://localhost:8080
+3. Run the frontend separately (`npm run dev` in the frontend repo)
+4. Monitor SSH connection status and logs for operation details
 
 ## SSH Command Execution
 The application executes the following types of commands on WLC devices:
