@@ -41,6 +41,9 @@ public class User extends NamedEntity implements HasIdAndEmail {
     @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
     private boolean enabled = true;
 
+    @Column(name = "is_system", nullable = false, columnDefinition = "bool default false")
+    private boolean system = false;
+
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()", updatable = false)
     @NotNull
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

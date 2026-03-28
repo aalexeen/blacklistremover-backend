@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-is-system-to-users
+      author: Aleksandr
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: is_system
+                  type: bool
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: UPDATE users SET is_system = true WHERE email = 'system@system.com';
+      rollback:
+        - dropColumn:
+            tableName: users
+            columnName: is_system

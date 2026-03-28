@@ -64,6 +64,9 @@ public class AdminUserController extends AbstractUserController {
         log.info("update {} with id={}", updateTo, id);
         assureIdConsistent(updateTo, id);
         User user = repository.getExisted(id);
+        if (user.isSystem()) {
+            throw new IllegalRequestDataException("System account cannot be modified");
+        }
         user.setName(updateTo.getName());
         user.setEmail(updateTo.getEmail().toLowerCase());
         user.setRoles(updateTo.getRoles());
@@ -88,8 +91,11 @@ public class AdminUserController extends AbstractUserController {
         if (authUser.id() == id) {
             throw new IllegalRequestDataException("You cannot change the enabled status of your own account");
         }
-        log.info(enabled ? "enable {}" : "disable {}", id);
         User user = repository.getExisted(id);
+        if (user.isSystem()) {
+            throw new IllegalRequestDataException("System account cannot be modified");
+        }
+        log.info(enabled ? "enable {}" : "disable {}", id);
         user.setEnabled(enabled);
     }
 }
