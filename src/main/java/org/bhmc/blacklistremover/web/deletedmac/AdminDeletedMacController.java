@@ -60,13 +60,8 @@ public class AdminDeletedMacController {
                     cb.like(cb.lower(root.get("clientMac")), "%" + mac.trim().toLowerCase() + "%"));
         }
         if (userId != null) {
-            if (userId == 0) {
-                // 0 is a sentinel for "System" (null deletedByUserId)
-                spec = spec.and((root, query, cb) -> cb.isNull(root.get("deletedByUserId")));
-            } else {
-                spec = spec.and((root, query, cb) ->
-                        cb.equal(root.get("deletedByUserId"), userId));
-            }
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("deletedByUserId"), userId));
         }
         if (reason != null && !reason.isBlank()) {
             spec = spec.and((root, query, cb) ->
@@ -88,7 +83,7 @@ public class AdminDeletedMacController {
     private Page<DeletedMacResponse> toResponsePage(Page<DeletedMac> recordsPage) {
         Map<Integer, String> userNames = recordsPage.getContent().stream()
                 .map(DeletedMac::getDeletedByUserId)
-                .filter(id -> id != null)
+                .filter(id -> id != null && id != 0)
                 .distinct()
                 .collect(Collectors.toMap(
                         id -> id,
@@ -115,7 +110,7 @@ public class AdminDeletedMacController {
                     dm.getClientMac(),
                     dm.getDeletedTime(),
                     dm.getDeletedByUserId(),
-                    userName != null ? userName : "System",
+                    (dm.getDeletedByUserId() == null || dm.getDeletedByUserId() == 0) ? "System" : (userName != null ? userName : "Unknown"),
                     dm.getWlcId(),
                     dm.getReason(),
                     dm.getOriginalBlockTime()
