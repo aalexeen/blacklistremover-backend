@@ -54,9 +54,9 @@ public class SecurityConfig {
                 corsConfig.setAllowedOriginPatterns(List.of(
                         "http://localhost:*",        // Any port on localhost
                         "http://127.0.0.1:*",       // Loopback
-                        "http://10.*.*.*:*",         // 10.x.x.x network
-                        "http://172.16.*.*:*",       // 172.16.x.x network
-                        "http://192.168.*.*:*"       // 192.168.x.x network
+                        "http://10.**",              // 10.x.x.x network (any port)
+                        "http://172.16.**",          // 172.16.x.x network (any port)
+                        "http://192.168.**"          // 192.168.x.x network (any port)
                 ));
                 corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); // Allowed methods
                 corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept")); // Allowed headers
